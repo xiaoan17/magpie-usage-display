@@ -1,0 +1,23 @@
+idf_component_register(
+    SRCS
+        "main.c"
+        "board.c"
+        "app_state.c"
+        "ui.c"
+        "ble_bridge.c"
+        "magpie_logo.c"
+    INCLUDE_DIRS
+        "."
+    REQUIRES
+        driver
+        esp_lcd
+        esp_timer
+        nvs_flash
+        bt
+        efuse
+        esp_driver_gpio
+        esp_driver_i2c
+        esp_driver_spi
+        esp_lcd_touch_cst9220
+        espressif__cjson
+)

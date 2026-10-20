@@ -1,0 +1,12 @@
+diff --git a/components/esp_system/ld/ld.ext_ram.sections b/components/esp_system/ld/ld.ext_ram.sections
+index 434cc259d8..e290d42437 100644
+--- a/components/esp_system/ld/ld.ext_ram.sections
++++ b/components/esp_system/ld/ld.ext_ram.sections
+@@ -16,6 +16,6 @@
+      * `_rodata_reserved_end` leaves the counter past the skip target, and moving it
+      * backwards here is a hard linker error.
+      */
+-    . = _ext_ram_on_same_bus ? ORIGIN(ext_ram_seg) + (_rodata_reserved_end - _flash_rodata_dummy_start) : 0;
++    . = _ext_ram_on_same_bus ? MAX(ABSOLUTE(.), ORIGIN(ext_ram_seg) + (_rodata_reserved_end - _flash_rodata_dummy_start)) : 0;
+     . = ALIGN(_ext_ram_on_same_bus ? _esp_mmu_page_size : 0);
+   } > ext_ram_seg

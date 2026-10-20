@@ -1,3 +1,20 @@
+# ESP-Mosaico / ESP32-S31 fork
+
+> **基于他人开源工作的适配版，并非从零原创。** 直接 fork 自
+> [peterroe/magpie-usage-display](https://github.com/peterroe/magpie-usage-display)，
+> 上游进一步基于 [jayyao97/codex-usage-display](https://github.com/jayyao97/codex-usage-display)。
+> 原界面、图标、BLE 协议、电脑端采集与同步方案来自上游；本 fork 增加 ESP32-S31 / ESP-Mosaico 适配、修复和验证记录。
+> 保留原 MIT 许可证及各组件原有许可证。详见 **[来源与贡献声明](ATTRIBUTION.md)**。
+
+- **ESP-Mosaico 用户**：[构建与使用](ports/esp-mosaico/README.md)
+- **移植过程**：[实现方法与踩坑记录](docs/esp-mosaico-porting.md)
+- **证据与范围**：[真机验证记录](docs/esp-mosaico-validation.md)
+- **原 Waveshare ESP32-S3 用户**：以下原项目说明保持保留；原 `src/` / PlatformIO 路径未改。
+
+2026-10-20：v1.2 真机配对、显示、颜色/文字修复与持续同步通过现场确认。
+
+---
+
 # Magpie Usage Display
 
 [简体中文](README.md) | [English](README.en.md)

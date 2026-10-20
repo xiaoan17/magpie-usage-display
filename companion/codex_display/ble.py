@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 BLE_OPERATION_TIMEOUT_SECONDS = 10
 BLE_DISCONNECT_TIMEOUT_SECONDS = 5
+BLE_PAIRING_TIMEOUT_SECONDS = 90
 
 
 class BleCompanion:
@@ -115,7 +116,29 @@ class BleCompanion:
         def on_command(_: Any, data: bytearray) -> None:
             self._commands.put_nowait(bytes(data))
 
-        await client.start_notify(COMMAND_UUID, on_command)
+        # CoreBluetooth can finish service discovery before pairing completes.
+        # Keep this connection alive while the user enters the panel's passkey.
+        loop = asyncio.get_running_loop()
+        pairing_deadline = loop.time() + BLE_PAIRING_TIMEOUT_SECONDS
+        while True:
+            try:
+                await client.start_notify(COMMAND_UUID, on_command)
+                break
+            except Exception as error:
+                message = str(error).lower()
+                pending_auth = (
+                    "authentication is insufficient" in message
+                    or "encryption is insufficient" in message
+                )
+                if (
+                    not pending_auth
+                    or not client.is_connected
+                    or disconnected.is_set()
+                    or loop.time() >= pairing_deadline
+                ):
+                    raise
+                logger.info("Waiting for Bluetooth pairing to complete...")
+                await asyncio.sleep(2)
         await self._request_refresh()
         await self._send_status(client)
         if disconnected.is_set() or not client.is_connected:
@@ -162,6 +185,7 @@ class BleCompanion:
     async def _send_status(self, client: Any) -> None:
         payload = await self._get_status()
         await self._write_gatt_char(client, STATUS_UUID, payload)
+        logger.info("Status delivered (%d bytes)", len(payload))
 
     async def _write_gatt_char(
         self, client: Any, uuid: str, payload: bytes

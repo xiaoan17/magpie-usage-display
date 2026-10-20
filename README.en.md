@@ -1,3 +1,16 @@
+# ESP-Mosaico / ESP32-S31 fork
+
+This is a derivative port of [peterroe/magpie-usage-display](https://github.com/peterroe/magpie-usage-display),
+which builds on [jayyao97/codex-usage-display](https://github.com/jayyao97/codex-usage-display).
+The product UI, logo, BLE protocol and companion foundation are upstream work, not original work of this fork.
+Original licenses and copyright notices are preserved. See [Attribution](ATTRIBUTION.md).
+
+This fork adds the [ESP-Mosaico ESP-IDF port](ports/esp-mosaico/README.md),
+[porting/debugging notes](docs/esp-mosaico-porting.md), and [validation evidence](docs/esp-mosaico-validation.md).
+The original Waveshare / Arduino sources and instructions are retained below.
+
+---
+
 # Magpie Usage Display
 
 [简体中文](README.md) | [English](README.en.md)

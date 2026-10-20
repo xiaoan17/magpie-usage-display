@@ -11,3 +11,15 @@ build/
 dist/
 .idea/
 .vscode/
+
+# ESP-IDF artifacts and device-private data
+managed_components/
+**/sdkconfig
+**/sdkconfig.old
+**/sdkconfig.ci
+probe-results/
+firmwares/
+*.bin
+*.elf
+*.map
+*.log

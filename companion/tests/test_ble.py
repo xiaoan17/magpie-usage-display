@@ -28,6 +28,38 @@ class HangingBleClient:
 
 
 class BleTests(unittest.IsolatedAsyncioTestCase):
+    async def test_pending_pairing_keeps_connection_until_authenticated(self):
+        companion = BleCompanion(AsyncMock(return_value=b"{}"), AsyncMock())
+        client = FakeBleClient(expected_writes=1)
+        client.start_notify = AsyncMock(side_effect=[
+            RuntimeError("Authentication is insufficient."), None
+        ])
+        with patch("companion.codex_display.ble.asyncio.sleep", new=AsyncMock()):
+            await companion._run_connection(client, asyncio.Event())
+        self.assertEqual(client.start_notify.await_count, 2)
+        self.assertEqual(len(client.writes), 1)
+
+    async def test_unrelated_notification_failure_is_not_retried(self):
+        companion = BleCompanion(AsyncMock(), AsyncMock())
+        client = FakeBleClient(expected_writes=1)
+        client.start_notify = AsyncMock(side_effect=RuntimeError("Disconnected"))
+        with self.assertRaisesRegex(RuntimeError, "Disconnected"):
+            await companion._run_connection(client, asyncio.Event())
+        self.assertEqual(client.start_notify.await_count, 1)
+        self.assertEqual(client.writes, [])
+
+    async def test_pairing_wait_has_a_deadline(self):
+        companion = BleCompanion(AsyncMock(), AsyncMock())
+        client = FakeBleClient(expected_writes=1)
+        client.start_notify = AsyncMock(
+            side_effect=RuntimeError("Encryption is insufficient.")
+        )
+        with patch("companion.codex_display.ble.BLE_PAIRING_TIMEOUT_SECONDS", 0):
+            with self.assertRaisesRegex(RuntimeError, "Encryption"):
+                await companion._run_connection(client, asyncio.Event())
+        self.assertEqual(client.start_notify.await_count, 1)
+        self.assertEqual(client.writes, [])
+
     async def test_connection_refreshes_before_first_status(self):
         order = []
 

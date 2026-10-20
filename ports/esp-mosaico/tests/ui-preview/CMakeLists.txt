@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.16)
+project(magpie_preview C)
+set(LV_CONF_PATH "${CMAKE_CURRENT_SOURCE_DIR}/lv_conf.h" CACHE STRING "")
+add_subdirectory(../../managed_components/lvgl__lvgl lvgl)
+add_executable(preview preview.c ../../main/ui.c ../../main/app_state.c ../../main/magpie_logo.c)
+target_include_directories(preview PRIVATE ../../main)
+target_link_libraries(preview PRIVATE lvgl m)
